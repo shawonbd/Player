@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html ng-app="pdfApp">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1">
+    <title>PDF Viewer</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+
+    <main class="fullscreen">
+        <pdf-main></pdf-main>
+    </main>
+
+    <!-- Libraries and Dependencies -->
+    <script type="text/javascript" src="lib/angular/angular.js"></script>
+    <script type="text/javascript" src="lib/ocLazyLoad/ocLazyLoad.min.js"></script>
+    <script type="text/javascript" src="lib/pdfViewer/pdfViewer.js"></script>
+
+    <!-- Main App Bundle -->
+    <script>
+	(function() {
+    'use strict';
+
+    var pdfApp = angular.module('pdfApp', ['pdf.viewer', 'oc.lazyLoad']);
+
+    pdfApp.config(['pdfViewerServiceProvider',
+        function(pdfViewerServiceProvider) {
+            pdfViewerServiceProvider.setPath('lib/pdfjs');
+        }
+    ]);
+})();
+(function() {
+    'use strict';
+
+    angular.module('pdfApp')
+        .component('pdfMain', {
+            templateUrl: 'tpl/pdfMain.tpl.html',
+            controller: pdfMainCtrl,
+            bindings: {}
+        });
+
+    pdfMainCtrl.$inject = ['$interval'];
+    function pdfMainCtrl($interval) {
+        var $ctrl = this;
+        var files = [
+            'test_pdfs/grades.pdf',
+            'test_pdfs/chemex.pdf'
+        ]
+
+        $ctrl.searchQuery = '';
+        $ctrl.fileUrl = files[0];
+        $ctrl.toggleNext = false;
+        $ctrl.togglePrevious = false;
+
+        $ctrl.nextMatch = function() {
+            $ctrl.toggleNext = !$ctrl.toggleNext;
+        };
+        $ctrl.previousMatch = function() {
+            $ctrl.togglePrevious = !$ctrl.togglePrevious;
+        };
+        $ctrl.search = function(query) {
+            $ctrl.searchQuery = query;
+            console.log('Search Query from Main: ', $ctrl.searchQuery);
+        };
+        $ctrl.viewerUpdated = function() {
+            console.log('Viewer has been updated');
+        };
+    }
+})();
+(function() {
+    'use strict';
+
+    angular.module('pdfApp')
+        .component('pdfTools', {
+            templateUrl: 'tpl/pdfTools.tpl.html',
+            controller: pdfToolsCtrl,
+            bindings: {
+                search: '&',
+                fullscreen: '&',
+                highlight: '&',
+                next: '&',
+                previous: '&',
+            }
+        });
+
+    function pdfToolsCtrl() {
+        var $ctrl = this;
+
+        $ctrl.searchQuery = '';
+        $ctrl.highlightAll = false;
+        $ctrl.keywords = ['nonlinear', 'discuss', 'duffing', 'equation'];
+
+        $ctrl.selectKeyword = function(index) {
+            $ctrl.searchQuery = $ctrl.keywords[index];
+            $ctrl.search({
+                query: $ctrl.searchQuery
+            });
+        };
+        $ctrl.onChecked = function() {
+            $ctrl.highlight({
+                highlightAll: $ctrl.highlightAll
+            });
+        };
+    }
+})();
+	
+	</script>
+</body>
+
+</html>

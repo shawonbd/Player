@@ -23,6 +23,28 @@
     <script type="text/javascript" src="lib/ocLazyLoad/ocLazyLoad.min.js"></script>
     <script type="text/javascript" src="lib/pdfViewer/pdfViewer.js"></script>
 
+	
+	<script>
+function getParam ( sname )
+{
+  var params = location.search.substr(location.search.indexOf("?")+1);
+  var sval =  params.replace("sv=", "");
+  
+  return sval;
+}
+var sv = getParam("sv");
+
+</script>
+<script>
+  var responseText = ''+sv+'';
+  urlArry = responseText.split(',');
+  start = true;
+  num_of_urlArry = urlArry.length;
+  index_of_urlArry = 0;
+</script>
+
+
+	
     <!-- Main App Bundle -->
     <script>
 	(function() {
@@ -50,9 +72,8 @@
     function pdfMainCtrl($interval) {
         var $ctrl = this;
         var files = [
-            'test_pdfs/grades.pdf',
-            'test_pdfs/chemex.pdf'
-        ]
+            '"+sv+"'
+            ]
 
         $ctrl.searchQuery = '';
         $ctrl.fileUrl = files[0];
